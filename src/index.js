@@ -42,9 +42,9 @@ const viewer = new Viewer("cesiumContainer", {
   geocoder: true, //disables search bar
   infoBox: true,
   navigationInstructionsInitiallyVisible: false, //disables instructions on start
-  sceneModePicker: false, //disables scene mode picker
+  sceneModePicker: true, //disables scene mode picker
   shouldAnimate: true,
-  selectionIndicator: false,
+  selectionIndicator: true,
 });
 
 // Add Cesium OSM Buildings, a global 3D buildings layer.
@@ -155,6 +155,7 @@ const translations = [
     ],
   },
 ];
+
 //SET UI STRINGS DEPENDING ON BROWSER LANGUAGE
 const userLang =
   navigator.language.slice(0, 2) || navigator.userLanguage.slice(0, 2);
@@ -270,9 +271,14 @@ const addSatelliteMarker = ([satName, satrec]) => {
   let sat = entities.add({
     name: satName,
     position: Cartesian3.fromArray(pos),
-    point: {
-      pixelSize: 8,
-      color: Color.YELLOW,
+
+    // point: {
+    //   pixelSize: 8,
+    //   color: Color.YELLOW,
+    // },
+
+    billboard: {
+      image: "src/satImg.png",
     },
     label: {
       show: false,
@@ -290,10 +296,12 @@ const addSatelliteMarker = ([satName, satrec]) => {
 
   sat.description = "<h2>Under Progress</h2>";
 };
+
 //ORBIT CALCULATION
 const calculateOrbit = (satrec) => {
   try {
     //init
+
     let orbitPoints = []; //array for calculated points
     const period = (2 * Math.PI) / satrec.no; // orbital period in minutes
     const timeStep = period / orbitSteps; //time interval between points on orbit
@@ -367,9 +375,9 @@ const updateSatellites = () => {
         ).map((el) => (el *= 1000)); //position km->m
 
         entities.values[index].position = Cartesian3.fromArray(pos); //update satellite position
-        entities.values[index].point.color = Color.YELLOW; //update point color
+        // entities.values[index].point.color = Color.YELLOW; //update point color
       } catch (error) {
-        entities.values[index].point.color = Color.RED; //update point color
+        // entities.values[index].point.color = Color.RED; //update point color
       }
     });
   }
@@ -458,6 +466,7 @@ const checkCameraZoom = () => {
     }
   }, 10);
 };
+
 const satUpdateInterval = setInterval(updateSatellites, satUpdateIntervalTime); //enables satellites positions update
 const frameRateMonitorInterval = setInterval(updateFPScounter, 500);
 scene.postUpdate.addEventListener(cameraIcrf); //enables camera lock at the start
